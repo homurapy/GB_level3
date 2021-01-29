@@ -12,34 +12,43 @@ public class TestClass {
     public TestClass () {
     }
     static void start (Object aClass) {
+        Method[] methods = aClass.getClass().getDeclaredMethods();
+        executionTest(preparationTest(methods), aClass);
+    }
+    private static List<Method> preparationTest (Method[] methods){
         Method before = null;
         Method after = null;
-        Method[] methods = aClass.getClass().getDeclaredMethods();
         List<Method> methodsTest = new ArrayList<>();
         List<Method> methodsTestResult = new ArrayList<>();
-
         for (int i = 0; i < methods.length; i++) {
 
             if (methods[i].getAnnotation(BeforeSuite.class) != null && before == null) {
                 before = methods[i];
+            } else if (methods[i].getAnnotation(lesson7.annotation.Test.class) != null) {
+                methodsTest.add(methods[i]);
+            } else if (methods[i].getAnnotation(AfterSuite.class) != null && after == null) {
+                after = methods[i];
+            } else {
+                throw new RuntimeException("Second annotation BeforeTest/AfterTest in test-class");
             }
-            else if  (methods[i].getAnnotation(lesson7.annotation.Test.class) != null) {
-                    methodsTest.add(methods[i]);
-                            }
-            else if (methods[i].getAnnotation(AfterSuite.class) != null && after == null) {
-                    after= methods[i];
-                }
-           else {throw new RuntimeException("Second annotation BeforeTest/AfterTest in test-class");}
         }
-        for (int i = 1; i <=10 ; i++) {
-            for (int j = 0; j < methodsTest.size() ; j++) {
-                if (methodsTest.get(j).getAnnotation(lesson7.annotation.Test.class).priority() == i){
+        for (int i = 1; i <= 10; i++) {
+            for (int j = 0; j < methodsTest.size(); j++) {
+                if (methodsTest.get(j).getAnnotation(lesson7.annotation.Test.class).priority() == i) {
                     methodsTestResult.add(methodsTest.get(j));
                 }
             }
         }
-        methodsTestResult.add(0, before);
-        methodsTestResult.add(methodsTestResult.size(), after);
+        if (before != null){
+            methodsTestResult.add(0, before);
+        }
+        if (after != null) {
+            methodsTestResult.add(methodsTestResult.size(), after);
+        }
+
+        return methodsTestResult;
+    }
+    static void executionTest (List<Method> methodsTestResult, Object aClass){
         methodsTestResult.forEach(t-> {
             try {
                 t.setAccessible(true);

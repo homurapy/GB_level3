@@ -30,7 +30,7 @@ public class OwnMath {
         System.out.println("a-b");
     }
     @Test(priority = 10)
-    public void total1(){
+    public void nord(){
         System.out.println("a^b");
     }
     @AfterSuite
