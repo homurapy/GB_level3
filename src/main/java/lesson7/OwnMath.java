@@ -13,7 +13,7 @@ public class OwnMath {
     public void min(){
         System.out.println("a<b");
     }
-    @lesson7.annotation.Test(priority = 1)
+    @lesson7.annotation.Test(priority = 5)
     public void mul(){
         System.out.println("a*b");
     }
